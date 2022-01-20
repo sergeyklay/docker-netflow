@@ -31,8 +31,6 @@ build: ; $(info $(M)build docker image...) @ ## Build docker image
 	  --push \
 	  --tag "$(FQIN)" .
 	@echo
-	@echo "$(M)To run docker image in CLI mode use: $(DOCKER) run --tty --interactive --publish 80:80 --rm $(IMAGE_NAME):$(IMAGE_TAG)"
-	@echo "$(M)To run docker image in Server mode use: $(DOCKER) run --publish 80:80 $(IMAGE_NAME):$(IMAGE_TAG)"
 
 .PHONY: help
 help: ## Show this help and exit
