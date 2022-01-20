@@ -50,6 +50,7 @@ RUN wget -O nfdump.tar.gz https://github.com/phaag/nfdump/archive/refs/tags/v${N
 
 ADD nfsen.conf /artifacts/nfsen.conf
 ADD entrypoint.sh /artifacts/entrypoint.sh
+ADD healthcheck.sh /artifacts/healthcheck.sh
 
 WORKDIR /artifacts
 RUN wget -O nfsen.tar.gz http://sourceforge.net/projects/nfsen/files/stable/nfsen-${NFSEN_VERSION}/nfsen-${NFSEN_VERSION}.tar.gz \
@@ -72,6 +73,11 @@ COPY --from=builder /artifacts/nfsen /build/nfsen
 
 # start script
 COPY --from=builder /artifacts/entrypoint.sh /entrypoint.sh
+
+# healthcheck script
+COPY --from=builder /artifacts/healthcheck.sh /healthcheck.sh
+
+HEALTHCHECK --interval=1m --timeout=5s CMD /healthcheck.sh
 
 RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
     && echo "$TIMEZONE" > /etc/timezone \
