@@ -1,4 +1,5 @@
-PLATFORMS ?= linux/amd64,linux/arm64
+# PLATFORMS ?= linux/arm64
+PLATFORMS ?= linux/arm64,linux/amd64,linux/386,linux/arm/v7,linux/arm/v6
 
 PROJECT_NAME ?= netflow
 VERSION ?= 1.0.0
