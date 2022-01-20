@@ -1,10 +1,16 @@
 #!/usr/bin/env bash
 
-echo "Starting nfsen ..."
+# set -e : exit the script if any statement returns a non-true return value
+set -o errexit
+
+# Starting nfsend
 /opt/nfsen/bin/nfsen start
 
-echo "Starting lighttpd ..."
-/etc/init.d/lighttpd start
+mkfifo -m 600 /tmp/logpipe
+cat <> /tmp/logpipe 1>&2 &
+chown www-data /tmp/logpipe
 
-echo "Blocking TTY ..."
-sleep infinity
+mkdir -p /run/lighttpd
+chown www-data /run/lighttpd
+
+exec "$@"

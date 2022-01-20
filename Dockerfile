@@ -90,6 +90,11 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
        lighttpd \
        php-cgi \
     && lighttpd-enable-mod fastcgi-php \
+    && lighttpd-enable-mod accesslog \
+    && sed -i -re 's|^accesslog.filename =.*|accesslog.filename = "/tmp/logpipe"|g' /etc/lighttpd/conf-enabled/10-accesslog.conf \
+    && sed -i -re 's|^server.errorlog  =.*|server.errorlog  = "/tmp/logpipe"|g' /etc/lighttpd/lighttpd.conf \
+    && sed -i -re 's|^server.pid-file  =.*|server.pid-file  = "/run/lighttpd/lighttpd.pid"|g' /etc/lighttpd/lighttpd.conf \
+    && sed -i -re 's|"socket" =>.*|"socket" => "/run/lighttpd/php.socket",|g' /etc/lighttpd/conf-enabled/15-fastcgi-php.conf \
     && mkdir -p /var/www /opt/nfsen /build/nfsen \
     && cd /build/nfsen \
     && ldconfig \
@@ -119,7 +124,6 @@ EXPOSE 4739/udp
 # sFlow
 EXPOSE 6343/udp
 
-# Peers
-EXPOSE 9996/udp
-
 ENTRYPOINT ["/entrypoint.sh"]
+
+CMD ["lighttpd", "-D", "-f", "/etc/lighttpd/lighttpd.conf", "2>&1"]
