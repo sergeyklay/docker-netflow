@@ -1,4 +1,3 @@
-# PLATFORMS ?= linux/arm64
 PLATFORMS ?= linux/amd64,linux/arm64
 VERSION ?= 1.0.0
 
