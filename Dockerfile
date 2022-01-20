@@ -41,6 +41,7 @@ WORKDIR /artifacts
 RUN wget -O nfsen.tar.gz http://sourceforge.net/projects/nfsen/files/stable/nfsen-${NFSEN_VERSION}/nfsen-${NFSEN_VERSION}.tar.gz \
     && tar -xzf nfsen.tar.gz \
     && mv nfsen-${NFSEN_VERSION} nfsen \
+    && sed -i -re "s|rrd_version < 1.6|rrd_version < 1.8|g" nfsen/libexec/NfSenRRD.pm \
     && mv /artifacts/nfsen.conf /artifacts/nfsen/etc/nfsen.conf
 
 FROM debian:bullseye-slim
@@ -59,7 +60,9 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
        lighttpd \
        php-cgi \
     && lighttpd-enable-mod fastcgi-php \
-    && mkdir -p /var/www /data /build/nfsen
+    && mkdir -p /var/www /opt/nfsen /build/nfsen \
+    && ln -snf /opt/nfsen /var/www/nfsen \
+    && echo | ./install.pl ./etc/nfsen.conf
 
 # Copy artifacts
 COPY --from=builder /artifacts/nfdump/ /usr/local
