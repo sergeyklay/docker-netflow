@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# set -e : exit the script if any statement returns a non-true return value
+set -o errexit
+
 command=$(/opt/nfsen/bin/nfsen status | grep -c "is not running")
 
 if [[ $command  == "0" ]]; then
