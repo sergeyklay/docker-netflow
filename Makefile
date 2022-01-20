@@ -13,7 +13,6 @@ FQIN       ?= $(IMAGE_NAME):$(IMAGE_TAG)
 # programs
 DOCKER  ?= docker
 
-# 	  --no-cache \
 .PHONY: build
 build: Dockerfile
 build: ; $(info $(M)build docker image...) @ ## Build docker image
