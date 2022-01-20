@@ -1,4 +1,4 @@
-# Docker NfSen
+# Dockerized Netflow Collector
 
 Netflow collector and local processing Docker image using [NfSen](http://nfsen.sourceforge.net/)
 and [nfdump](https://github.com/phaag/nfdump) for processing.
@@ -18,9 +18,9 @@ To quickly get started running use the following command:
 # -t   Allocate a pseudo-TTY
 $ docker run \
   -p 80:80 \
+  -p 2055:2055/udp \
   -p 4739:4739/udp \
   -p 6343:6343/udp \
-  -p 9995:9995/udp \
   -p 9996:9996/udp \
   -i \
   -t \

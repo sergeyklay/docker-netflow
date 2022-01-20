@@ -104,16 +104,16 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
 # HTTP server
 EXPOSE 80
 
+# NetFlow
+EXPOSE 2055/udp
+
 # IPFIX
-EXPOSE 4739
+EXPOSE 4739/udp
 
 # sFlow
-EXPOSE 6343
-
-# NetFlow
-EXPOSE 9995
+EXPOSE 6343/udp
 
 # Peers
-EXPOSE 9996
+EXPOSE 9996/udp
 
 ENTRYPOINT ["/entrypoint.sh"]
