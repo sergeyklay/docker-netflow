@@ -36,6 +36,7 @@ RUN wget -O nfdump.tar.gz https://github.com/phaag/nfdump/archive/refs/tags/v${N
     && make install
 
 ADD nfsen.conf /artifacts/nfsen.conf
+ADD entrypoint.sh /artifacts/entrypoint.sh
 
 WORKDIR /artifacts
 RUN wget -O nfsen.tar.gz http://sourceforge.net/projects/nfsen/files/stable/nfsen-${NFSEN_VERSION}/nfsen-${NFSEN_VERSION}.tar.gz \
@@ -67,8 +68,15 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
 COPY --from=builder /artifacts/nfdump/ /usr/local
 COPY --from=builder /artifacts/nfsen /build/nfsen
 
+# start script
+COPY --from=builder /artifacts/entrypoint.sh /entrypoint.sh
+
 RUN cd /build/nfsen \
     && ldconfig \
     && echo | ./install.pl ./etc/nfsen.conf || true \
     && rm -rf /var/www/html \
-    && ln -s /var/www/nfsen /var/www/html
+    && ln -s /var/www/nfsen /var/www/html \
+    && ln -sf /var/www/nfsen/nfsen.php /var/www/nfsen/index.php \
+    && chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
