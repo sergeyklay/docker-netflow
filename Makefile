@@ -8,6 +8,14 @@ IMAGE_NAME ?= $(IMAGE_VND)/$(PROJECT_NAME)
 IMAGE_TAG  ?= $(VERSION)
 FQIN       ?= $(IMAGE_NAME):$(IMAGE_TAG)
 
+ifneq ($(TERM),)
+	BLUE   := $(shell tput setaf 4)
+	RESET  := $(shell tput sgr0)
+	M      := $(shell printf "$(BLUE)▶$(RESET) ")
+else
+	M      := $(shell printf "▶ ")
+endif
+
 # build project by default
 .DEFAULT_GOAL = build
 
