@@ -38,10 +38,9 @@ RUN wget -O nfdump.tar.gz https://github.com/phaag/nfdump/archive/refs/tags/v${N
 ADD nfsen.conf /artifacts/nfsen.conf
 
 WORKDIR /artifacts
-RUN wget -O nfdump.tar.gz http://sourceforge.net/projects/nfsen/files/stable/nfsen-${NFSEN_VERSION}/nfsen-${NFSEN_VERSION}.tar.gz \
+RUN wget -O nfsen.tar.gz http://sourceforge.net/projects/nfsen/files/stable/nfsen-${NFSEN_VERSION}/nfsen-${NFSEN_VERSION}.tar.gz \
     && tar -xzf nfsen.tar.gz \
     && mv nfsen-${NFSEN_VERSION} nfsen \
-    && find nfsen | grep "\\._" | xargs rm \
     && mv /artifacts/nfsen.conf /artifacts/nfsen/etc/nfsen.conf
 
 FROM debian:bullseye-slim
