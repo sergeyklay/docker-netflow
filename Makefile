@@ -1,6 +1,6 @@
 PLATFORMS ?= linux/amd64,linux/arm64
 
-PROJECT_NAME ?= nfsen
+PROJECT_NAME ?= netflow
 VERSION ?= 1.0.0
 
 IMAGE_VND  ?= klay
