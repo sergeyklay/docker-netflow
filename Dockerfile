@@ -56,8 +56,8 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
        lighttpd \
        php-cgi \
     && lighttpd-enable-mod fastcgi-php \
-    && mkdir -p /var/www /data /build
+    && mkdir -p /var/www /data /build/nfsen
 
 # Copy artifacts
 COPY --from=builder /artifacts/nfdump/ /usr/local
-COPY --from=builder /artifacts/nfsen /build
+COPY --from=builder /artifacts/nfsen /build/nfsen
