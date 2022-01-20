@@ -79,4 +79,11 @@ RUN cd /build/nfsen \
     && ln -sf /var/www/nfsen/nfsen.php /var/www/nfsen/index.php \
     && chmod +x /entrypoint.sh
 
+# HTTP server
+EXPOSE 80
+
+# nfsen
+EXPOSE 9995
+EXPOSE 9996
+
 ENTRYPOINT ["/entrypoint.sh"]
