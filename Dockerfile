@@ -53,6 +53,9 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
     && echo "$TIMEZONE" > /etc/timezone \
     && DEBIANFRONTEND=noninteractive apt-get update -qq \
     && DEBIANFRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests -y \
+       libmailtools-perl \
+       librrds-perl \
+       libsocket6-perl \
        lighttpd \
        php-cgi \
     && lighttpd-enable-mod fastcgi-php \
