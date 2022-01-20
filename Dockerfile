@@ -61,9 +61,11 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
        php-cgi \
     && lighttpd-enable-mod fastcgi-php \
     && mkdir -p /var/www /opt/nfsen /build/nfsen \
-    && ln -snf /opt/nfsen /var/www/nfsen \
-    && echo | ./install.pl ./etc/nfsen.conf
+    && ln -snf /opt/nfsen /var/www/nfsen
 
 # Copy artifacts
 COPY --from=builder /artifacts/nfdump/ /usr/local
 COPY --from=builder /artifacts/nfsen /build/nfsen
+
+RUN cd /build/nfsen \
+    && echo | ./install.pl ./etc/nfsen.conf
