@@ -2,7 +2,7 @@ FROM debian:bullseye-slim AS builder
 
 ARG NFDUMP_VERSION=1.6.23
 ARG NFSEN_VERSION=1.3.8
-ARG TIMEZONE=Europe/Kiev
+ARG TIMEZONE=UTC
 
 ENV DEBIANFRONTEND=noninteractive
 ENV NFDUMP_VERSION=${NFDUMP_VERSION}
@@ -60,10 +60,11 @@ RUN wget -O nfsen.tar.gz http://sourceforge.net/projects/nfsen/files/stable/nfse
 
 FROM debian:bullseye-slim
 
-ARG TIMEZONE
+ARG TIMEZONE=UTC
 
 LABEL org.opencontainers.image.authors="Serghei Iakovlev <egrep@protonmail.ch>" \
-      org.opencontainers.image.description="Slimmed-down NfSen Docker image"
+      org.opencontainers.image.description="Slimmed-down Netflow collector and local processing Docker image" \
+      org.opencontainers.image.source="https://github.com/sergeyklay/docker-netflow"
 
 # Copy artifacts
 COPY --from=builder /artifacts/nfdump/ /usr/local
