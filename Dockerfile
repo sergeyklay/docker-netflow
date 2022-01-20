@@ -25,13 +25,6 @@ RUN DEBIANFRONTEND=noninteractive apt-get update -qq \
        pkg-config \
        wget
 
-# rrdtool \
-# libmailtools-perl \
-#           librrd-dev \
-# librrds-perl \
-# libsocket6-perl \
-
-
 WORKDIR /artifacts
 RUN wget -O nfdump.tar.gz https://github.com/phaag/nfdump/archive/refs/tags/v${NFDUMP_VERSION}.tar.gz \
     && tar -xzf nfdump.tar.gz \
@@ -69,6 +62,3 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
 # Copy artifacts
 COPY --from=builder /artifacts/nfdump/ /usr/local
 COPY --from=builder /artifacts/nfsen /build
-
-#COPY --from=builder /var/www/ /var/www/
-#COPY --from=builder /data/ /data
