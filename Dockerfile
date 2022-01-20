@@ -52,8 +52,9 @@ LABEL org.opencontainers.image.authors="Serghei Iakovlev <egrep@protonmail.ch>"
 
 RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
     && echo "$TIMEZONE" > /etc/timezone \
-    && DEBIANFRONTEND=noninteractive apt-get update -qq \
-    && DEBIANFRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests -y \
+    && echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
+    && apt-get update -qq \
+    && apt-get install --no-install-recommends --no-install-suggests -y \
        libmailtools-perl \
        librrds-perl \
        libsocket6-perl \
@@ -68,4 +69,5 @@ COPY --from=builder /artifacts/nfdump/ /usr/local
 COPY --from=builder /artifacts/nfsen /build/nfsen
 
 RUN cd /build/nfsen \
+    && ldconfig \
     && echo | ./install.pl ./etc/nfsen.conf
