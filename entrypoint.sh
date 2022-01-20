@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-# start nfsen
+echo "Starting nfsen ..."
 /opt/nfsen/bin/nfsen start
 
-# start lighttpd
+echo "Starting lighttpd ..."
 /etc/init.d/lighttpd start
 
-# block
+echo "Blocking TTY ..."
 sleep infinity
