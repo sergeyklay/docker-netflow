@@ -9,8 +9,9 @@ ENV NFDUMP_VERSION=${NFDUMP_VERSION}
 ENV NFSEN_VERSION=${NFSEN_VERSION}
 ENV TIMEZONE=${TIMEZONE}
 
-RUN DEBIANFRONTEND=noninteractive apt-get update -qq \
-    && DEBIANFRONTEND=noninteractive apt-get install --no-install-recommends --no-install-suggests -y \
+RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections \
+    && apt-get update -qq \
+    && apt-get install --no-install-recommends --no-install-suggests -y \
        autoconf \
        autogen \
        automake \
@@ -26,12 +27,24 @@ RUN DEBIANFRONTEND=noninteractive apt-get update -qq \
        wget
 
 WORKDIR /artifacts
+
+# Bellow are nfdump configure options:
+#
+# --prefix           - Install files in PREFIX/bin, PREFIX/lib, etc.
+# --enable-nfprofile - Build nfprofile used by NfSen.
+# --enable-nftrack   - Build nftrack used by PortTracker.
+# --enable-sflow     - Build sflow collector sfcpad.
+#
 RUN wget -O nfdump.tar.gz https://github.com/phaag/nfdump/archive/refs/tags/v${NFDUMP_VERSION}.tar.gz \
     && tar -xzf nfdump.tar.gz \
     && cd nfdump-${NFDUMP_VERSION} \
     && bash autogen.sh \
     && mkdir -p /artifacts/nfdump \
-    && ./configure --prefix=/artifacts/nfdump --enable-nfprofile --enable-sflow \
+    && ./configure \
+       --prefix=/artifacts/nfdump \
+       --enable-nfprofile \
+       --enable-nftrack \
+       --enable-sflow \
     && make \
     && make install
 
@@ -47,9 +60,17 @@ RUN wget -O nfsen.tar.gz http://sourceforge.net/projects/nfsen/files/stable/nfse
 
 FROM debian:bullseye-slim
 
-ARG TIMEZONE=Europe/Kiev
+ARG TIMEZONE
 
-LABEL org.opencontainers.image.authors="Serghei Iakovlev <egrep@protonmail.ch>"
+LABEL org.opencontainers.image.authors="Serghei Iakovlev <egrep@protonmail.ch>" \
+      org.opencontainers.image.description="Slimmed-down NfSen Docker image"
+
+# Copy artifacts
+COPY --from=builder /artifacts/nfdump/ /usr/local
+COPY --from=builder /artifacts/nfsen /build/nfsen
+
+# start script
+COPY --from=builder /artifacts/entrypoint.sh /entrypoint.sh
 
 RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
     && echo "$TIMEZONE" > /etc/timezone \
@@ -62,28 +83,36 @@ RUN ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
        lighttpd \
        php-cgi \
     && lighttpd-enable-mod fastcgi-php \
-    && mkdir -p /var/www /opt/nfsen /build/nfsen
-
-# Copy artifacts
-COPY --from=builder /artifacts/nfdump/ /usr/local
-COPY --from=builder /artifacts/nfsen /build/nfsen
-
-# start script
-COPY --from=builder /artifacts/entrypoint.sh /entrypoint.sh
-
-RUN cd /build/nfsen \
+    && mkdir -p /var/www /opt/nfsen /build/nfsen \
+    && cd /build/nfsen \
     && ldconfig \
     && echo | ./install.pl ./etc/nfsen.conf || true \
     && rm -rf /var/www/html \
     && ln -s /var/www/nfsen /var/www/html \
     && ln -sf /var/www/nfsen/nfsen.php /var/www/nfsen/index.php \
-    && chmod +x /entrypoint.sh
+    && chmod +x /entrypoint.sh \
+    && rm -rf /build \
+    && apt-get autoremove -y >/dev/null 2>&1 || true \
+    && apt-get clean -y >/dev/null 2>&1 || true \
+    && apt-get autoclean -y >/dev/null 2>&1 || true \
+    && rm -rf /tmp/* /var/tmp/* \
+    && find /var/cache/apt/archives /var/lib/apt/lists -not -name lock -type f -delete \
+    && find /var/cache -type f -delete \
+    && find /var/log -type f | while read -r f; do echo -ne '' > "${f}" >/dev/null 2>&1 || true; done
 
 # HTTP server
 EXPOSE 80
 
-# nfsen
+# IPFIX
+EXPOSE 4739
+
+# sFlow
+EXPOSE 6343
+
+# NetFlow
 EXPOSE 9995
+
+# Peers
 EXPOSE 9996
 
 ENTRYPOINT ["/entrypoint.sh"]
