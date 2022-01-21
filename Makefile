@@ -25,6 +25,8 @@ else
 VERSION ?= 1.0.0
 endif
 
+VERSION_MAJOR := $(shell echo $(VERSION) | cut -f1 -d.)
+VERSION_MINOR := $(shell echo $(VERSION) | cut -f2 -d.)
 BUILD_ID ?= $(shell git rev-parse --short HEAD || echo -n 0000000)
 
 # build project by default
@@ -43,12 +45,18 @@ build: ; $(info $(M)build docker image...) @ ## Build docker image
 	  --pull \
 	  --push \
 	  --tag "$(FQIN)" \
+	  --tag "$(IMAGE_NAME):$(VERSION_MAJOR).$(VERSION_MINOR)" \
+	  --tag "$(IMAGE_NAME):$(VERSION_MAJOR)" \
+	  --tag "$(IMAGE_NAME):$(VERSION)-bullseye" \
+	  --tag "$(IMAGE_NAME):$(VERSION_MAJOR).$(VERSION_MINOR)-bullseye" \
+	  --tag "$(IMAGE_NAME):$(VERSION_MAJOR)-bullseye" \
+	  --tag "$(IMAGE_NAME):bullseye" \
 	  --tag "$(IMAGE_NAME):latest" .
 	@echo
 
 .PHONY: help
 help: ## Show this help and exit
-	@echo 'Dockerized Netflow Collector v$(VERSION)'
+	@echo 'Dockerized Netflow Collector'
 	@echo
 	@echo 'Usage:'
 	@echo
@@ -62,6 +70,8 @@ help: ## Show this help and exit
 	@echo 'Flags:'
 	@echo ''
 	@echo '  PLATFORMS:    $(PLATFORMS)'
+	@echo '  VERSION:      $(VERSION)'
+	@echo '  BUILD_ID:     $(BUILD_ID)'
 	@echo
 	@echo 'Environment variables:'
 	@echo
@@ -72,4 +82,12 @@ help: ## Show this help and exit
 	@echo
 	@echo '  Docker bin:   $(DOCKER)'
 	@echo '  Docker image: $(IMAGE_NAME)'
-	@echo '  Docker tag:   $(IMAGE_TAG)'
+	@echo '  Docker tags:'
+	@echo '    - $(FQIN)'
+	@echo '    - $(IMAGE_NAME):$(VERSION_MAJOR).$(VERSION_MINOR)'
+	@echo '    - $(IMAGE_NAME):$(VERSION_MAJOR)'
+	@echo '    - $(IMAGE_NAME):$(VERSION)-bullseye'
+	@echo '    - $(IMAGE_NAME):$(VERSION_MAJOR).$(VERSION_MINOR)-bullseye'
+	@echo '    - $(IMAGE_NAME):$(VERSION_MAJOR)-bullseye'
+	@echo '    - $(IMAGE_NAME):bullseye'
+	@echo '    - $(IMAGE_NAME):latest'
