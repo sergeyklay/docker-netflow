@@ -1,3 +1,5 @@
+SHELL ?= /usr/bin/env bash
+
 # PLATFORMS ?= linux/arm64
 PLATFORMS ?= linux/arm64,linux/amd64,linux/386,linux/arm/v7,linux/arm/v6
 
@@ -17,6 +19,14 @@ else
 	M      := $(shell printf "▶ ")
 endif
 
+ifneq "$(wildcard $(CURDIR)/VERSION)" ""
+VERSION ?= $(shell cat $(CURDIR)/VERSION | head -n 1)
+else
+VERSION ?= 1.0.0
+endif
+
+BUILD_ID ?= $(shell git rev-parse --short HEAD || echo -n 0000000)
+
 # build project by default
 .DEFAULT_GOAL = build
 
@@ -27,15 +37,18 @@ DOCKER  ?= docker
 build: Dockerfile
 build: ; $(info $(M)build docker image...) @ ## Build docker image
 	$(DOCKER) buildx build \
+	  --build-arg VERSION="$(VERSION)" \
+	  --build-arg BUILD_ID="$(BUILD_ID)" \
 	  --platform "$(PLATFORMS)" \
 	  --pull \
 	  --push \
-	  --tag "$(FQIN)" .
+	  --tag "$(FQIN)" \
+	  --tag "$(IMAGE_NAME):latest" .
 	@echo
 
 .PHONY: help
 help: ## Show this help and exit
-	@echo 'Dockerized $(PROJECT_NAME) v$(VERSION)'
+	@echo 'Dockerized Netflow Collector v$(VERSION)'
 	@echo
 	@echo 'Usage:'
 	@echo
