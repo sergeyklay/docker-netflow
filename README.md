@@ -26,7 +26,7 @@ NfSen is a graphical web based front end for the nfdump netflow tools.
 
 For more see http://nfsen.sourceforge.net/
 
-# #What is nfdump?
+## What is nfdump?
 
 The nfdump tools collect and process netflow data on the command line. They are part of the NfSen project which is explained more detailed at
 http://www.ripe.net/ripe/meetings/ripe-50/presentations/ripe50-plenary-tue-nfsen-nfdump.pdf
