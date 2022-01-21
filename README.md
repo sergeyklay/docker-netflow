@@ -8,7 +8,7 @@ time based graphing and stats summarization.
 
 ## Quick reference
 
-- **Maintained by:** [Serghei Iakovlev](https://github.com/sergeyklay/docker-netflow)
+- **Maintained by:** [Serghei Iakovlev](https://github.com/sergeyklay)
 - **Where to get help:** [GitHub Issues](https://github.com/sergeyklay/docker-netflow/issues)
 
 ## Supported tags and respective `Dockerfile` links
